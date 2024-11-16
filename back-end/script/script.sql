@@ -136,3 +136,9 @@ SELECT
 FROM Church_Member cm
 JOIN Person p ON cm.id_Person = p.id
 JOIN Church ch ON cm.id_Church = ch.id;
+
+CREATE VIEW v_Bill AS
+SELECT
+    sum(paid) AS total_paid,
+    sum(due) AS total_due
+FROM person;

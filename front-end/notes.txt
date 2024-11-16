@@ -1,1 +1,3 @@
 yarn create vue
+
+yarn run dev 
