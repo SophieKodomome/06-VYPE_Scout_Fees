@@ -10,7 +10,7 @@ npx prisma migrate (modify database)
 npx prisma generate (interact with the database)
 
 
-node src/index.js
+node dist/index.js
 
 yarn add ts-node --dev
 yarn add nodemon --dev
