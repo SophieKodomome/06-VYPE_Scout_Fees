@@ -1,3 +1,9 @@
 yarn create vue
 
 yarn run dev 
+
+yarn add -D tailwindcss@latest postcss@latest autoprefixer@latest
+npx tailwindcss init -p
+
+the guide
+https://v2.tailwindcss.com/docs/guides/vue-3-vite
