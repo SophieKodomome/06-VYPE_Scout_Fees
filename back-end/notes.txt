@@ -1,0 +1,17 @@
+yarn init -y
+yarn add express
+npm i --save-dev @types/node
+yarn add prisma @prisma/client
+yarn add typescript --dev
+npx tsc --init
+npx prisma init
+npx prisma db pull (what we want to do now)
+npx prisma migrate (modify database)
+npx prisma generate (interact with the database)
+
+
+node src/index.js
+
+yarn add ts-node --dev
+yarn add nodemon --dev
+npx ts-node src/index.ts
