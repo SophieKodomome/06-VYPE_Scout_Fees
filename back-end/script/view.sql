@@ -6,7 +6,8 @@ SELECT
     dl.id_Person AS id_Person,
     p.name AS name,
     p.paid AS paid,
-    p.due AS due
+    p.due AS due,
+    p.year AS year
 FROM Dioseze_Leader dl
 JOIN Person p ON dl.id_Person = p.id
 JOIN Dioseze d ON dl.id_Dioseze = d.id;
@@ -20,7 +21,8 @@ SELECT
     dl.id_Person AS id_Person,
     p.name AS name,
     p.paid AS paid,
-    p.due AS due
+    p.due AS due,
+    p.year AS year
 FROM District_Leader dl
 JOIN Person p ON dl.id_Person = p.id
 JOIN District d ON dl.id_District = d.id;
@@ -33,7 +35,8 @@ SELECT
     cl.id_Person AS id_Person,
     p.name AS name,
     p.paid AS paid,
-    p.due AS due
+    p.due AS due,
+    p.year AS year
 FROM Church_Leader cl
 JOIN Person p ON cl.id_Person = p.id
 JOIN Church ch ON cl.id_Church = ch.id;
@@ -46,7 +49,8 @@ SELECT
     ca.id_Person AS id_Person,
     p.name AS name,
     p.paid AS paid,
-    p.due AS due
+    p.due AS due,
+    p.year AS year
 FROM Church_Apprentice ca
 JOIN Person p ON ca.id_Person = p.id
 JOIN Church ch ON ca.id_Church = ch.id;
@@ -59,13 +63,9 @@ SELECT
     cm.id_Person AS id_Person,
     p.name AS name,
     p.paid AS paid,
-    p.due AS due
+    p.due AS due,
+    p.year AS year
 FROM Church_Member cm
 JOIN Person p ON cm.id_Person = p.id
 JOIN Church ch ON cm.id_Church = ch.id;
 
-CREATE VIEW v_Bill AS
-SELECT
-    sum(paid) AS total_paid,
-    sum(due) AS total_due
-FROM person;

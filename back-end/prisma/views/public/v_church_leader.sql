@@ -5,7 +5,8 @@ SELECT
   cl.id_person,
   p.name,
   p.paid,
-  p.due
+  p.due,
+  p.year
 FROM
   (
     (

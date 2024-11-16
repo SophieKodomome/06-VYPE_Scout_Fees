@@ -79,6 +79,7 @@ model person {
   name              String              @db.VarChar(100)
   paid              Int?
   due               Int?
+  year              Int?
   church_apprentice church_apprentice[]
   church_leader     church_leader[]
   church_member     church_member[]
@@ -87,54 +88,56 @@ model person {
 }
 
 view v_dioseze_leader {
-  id           Int @unique
+  id           Int     @unique
   id_dioseze   Int?
   dioseze_name String? @db.VarChar(100)
   id_person    Int?
   name         String? @db.VarChar(100)
   paid         Int?
   due          Int?
-
+  year         Int?
 }
 
 view v_district_leader {
-  id            Int @unique
+  id            Int     @unique
   id_district   Int?
   district_name String? @db.VarChar(100)
   id_person     Int?
   name          String? @db.VarChar(100)
   paid          Int?
   due           Int?
-
+  year          Int?
 }
 
 view v_church_leader {
-  id          Int @unique
+  id          Int     @unique
   id_church   Int?
   church_name String? @db.VarChar(100)
   id_person   Int?
   name        String? @db.VarChar(100)
   paid        Int?
   due         Int?
-
+  year        Int?
 }
 
 view v_church_apprentice {
-  id          Int @unique
+  id          Int     @unique
   id_church   Int?
   church_name String? @db.VarChar(100)
   id_person   Int?
   name        String? @db.VarChar(100)
   paid        Int?
   due         Int?
+  year        Int?
 }
 
 view v_church_member {
-  id          Int @unique
+  id          Int     @unique
   id_church   Int?
   church_name String? @db.VarChar(100)
   id_person   Int?
   name        String? @db.VarChar(100)
   paid        Int?
   due         Int?
+  year        Int?
 }
