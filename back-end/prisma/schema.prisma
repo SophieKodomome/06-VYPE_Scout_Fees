@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -83,4 +84,57 @@ model person {
   church_member     church_member[]
   dioseze_leader    dioseze_leader[]
   district_leader   district_leader[]
+}
+
+view v_dioseze_leader {
+  id           Int @unique
+  id_dioseze   Int?
+  dioseze_name String? @db.VarChar(100)
+  id_person    Int?
+  name         String? @db.VarChar(100)
+  paid         Int?
+  due          Int?
+
+}
+
+view v_district_leader {
+  id            Int @unique
+  id_district   Int?
+  district_name String? @db.VarChar(100)
+  id_person     Int?
+  name          String? @db.VarChar(100)
+  paid          Int?
+  due           Int?
+
+}
+
+view v_church_leader {
+  id          Int @unique
+  id_church   Int?
+  church_name String? @db.VarChar(100)
+  id_person   Int?
+  name        String? @db.VarChar(100)
+  paid        Int?
+  due         Int?
+
+}
+
+view v_church_apprentice {
+  id          Int @unique
+  id_church   Int?
+  church_name String? @db.VarChar(100)
+  id_person   Int?
+  name        String? @db.VarChar(100)
+  paid        Int?
+  due         Int?
+}
+
+view v_church_member {
+  id          Int @unique
+  id_church   Int?
+  church_name String? @db.VarChar(100)
+  id_person   Int?
+  name        String? @db.VarChar(100)
+  paid        Int?
+  due         Int?
 }
