@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model church {
+  id                Int                 @id @default(autoincrement())
+  id_district       Int
+  name              String              @db.VarChar(100)
+  district          district            @relation(fields: [id_district], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  church_apprentice church_apprentice[]
+  church_leader     church_leader[]
+  church_member     church_member[]
+}
+
+model church_apprentice {
+  id        Int    @id @default(autoincrement())
+  id_church Int
+  id_person Int
+  church    church @relation(fields: [id_church], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  person    person @relation(fields: [id_person], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model church_leader {
+  id        Int    @id @default(autoincrement())
+  id_church Int
+  id_person Int
+  church    church @relation(fields: [id_church], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  person    person @relation(fields: [id_person], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model church_member {
+  id        Int    @id @default(autoincrement())
+  id_church Int
+  id_person Int
+  church    church @relation(fields: [id_church], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  person    person @relation(fields: [id_person], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model dioseze {
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(100)
+  dioseze_leader dioseze_leader[]
+  district       district[]
+}
+
+model dioseze_leader {
+  id         Int     @id @default(autoincrement())
+  id_dioseze Int
+  id_person  Int
+  dioseze    dioseze @relation(fields: [id_dioseze], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  person     person  @relation(fields: [id_person], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model district {
+  id              Int               @id @default(autoincrement())
+  id_dioseze      Int
+  name            String            @db.VarChar(100)
+  church          church[]
+  dioseze         dioseze           @relation(fields: [id_dioseze], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  district_leader district_leader[]
+}
+
+model district_leader {
+  id          Int      @id @default(autoincrement())
+  id_district Int
+  id_person   Int
+  district    district @relation(fields: [id_district], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  person      person   @relation(fields: [id_person], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model person {
+  id                Int                 @id @default(autoincrement())
+  name              String              @db.VarChar(100)
+  paid              Int?
+  due               Int?
+  church_apprentice church_apprentice[]
+  church_leader     church_leader[]
+  church_member     church_member[]
+  dioseze_leader    dioseze_leader[]
+  district_leader   district_leader[]
+}
