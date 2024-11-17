@@ -4,12 +4,16 @@ import { RouterLink, RouterView } from 'vue-router'
 <template>
   <header>
     <div class="flex flex-row bg-blue-600">
-      <span class="text-gray-100 px-10 py-6 hover:text-blue-600 hover:bg-blue-100  ease-out duration-300">
-        <RouterLink class=" uppercase text-1xl font-bold " to="/HomeView">Accueil</RouterLink>
-      </span>
-      <span class="text-gray-100 px-10 py-6 hover:text-blue-600 hover:bg-blue-100  ease-out duration-300">
-        <RouterLink class=" uppercase text-1xl font-bold " to="/">Paiement</RouterLink>
-      </span>
+      <RouterLink class=" text-gray-100 hover:text-blue-600 hover:bg-blue-100  ease-out duration-300" to="/">
+        <h1 class="py-6 px-10 uppercase text-1xl font-bold justify-items-center">
+          Accueil
+        </h1>
+      </RouterLink>
+      <RouterLink class=" text-gray-100 hover:text-blue-600 hover:bg-blue-100  ease-out duration-300" to="/Pay">
+        <h1 class="py-6 px-10 uppercase text-1xl font-bold justify-items-center">
+          Paiement
+        </h1>
+      </RouterLink>
     </div>
   </header>
 </template>

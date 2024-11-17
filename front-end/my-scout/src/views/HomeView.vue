@@ -36,7 +36,6 @@ console.log(data);
 </script>
 <template>
   <main>
-    <MyHeader />
     <div class="mx-24 my-12 flex flex-col space-y-4">
       <!-- Loading state -->
       <div v-if="isLoading" class="text-center text-gray-700">Loading...</div>
