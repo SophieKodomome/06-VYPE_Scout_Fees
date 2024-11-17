@@ -141,3 +141,12 @@ view v_church_member {
   due         Int?
   year        Int?
 }
+
+view v_has_not_paid {
+  id   Int @unique
+  name String? @db.VarChar(100)
+  paid Int?
+  due  Int?
+  year Int?
+
+}
