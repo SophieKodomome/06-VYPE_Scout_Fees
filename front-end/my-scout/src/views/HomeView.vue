@@ -32,6 +32,7 @@ onMounted(async () => {
   }
 });
 
+console.log(data);
 </script>
 <template>
   <main>

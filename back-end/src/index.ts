@@ -20,7 +20,7 @@ app.get("/getData", async (_request: Request, response: Response) => {
 
   try {
     const people = await prisma.person.findMany();
-    const churchApprentices = await prisma.church_apprentice.findMany();
+    const churchApprentices = await prisma.v_church_apprentice.findMany();
     const churchLeaders = await prisma.v_church_leader.findMany();
     const churchMembers = await prisma.v_church_member.findMany();
     const diosezeLeaders = await prisma.v_dioseze_leader.findMany();
