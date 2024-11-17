@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import MyHeader from './components/MyHeader.vue';
+import HomeView from './views/HomeView.vue';
 </script>
 
 <template>
-  <header>
-    <h1 class="text-blue-800">Hello</h1>
-  </header>
-
-  <RouterView />
+  <HomeView/>
 </template>

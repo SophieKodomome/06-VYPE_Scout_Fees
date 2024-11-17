@@ -5,9 +5,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
 const PORT = 8000;
 app.use(express_1.default.json());
+app.use((0, cors_1.default)({
+    origin: "http://localhost:5173",
+}));
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
@@ -34,6 +38,7 @@ app.get("/getData", async (_request, response) => {
             districts,
             churches,
         };
+        console.log("get Data");
         response.status(200).send({
             data,
         });
@@ -63,24 +68,6 @@ app.post("/updatePerson", async (request, response) => {
         });
         response.status(200).send({
             updatePayment,
-        });
-    }
-    catch (error) {
-        console.error("Error fetching people:", error);
-        response
-            .status(500)
-            .send({ error: "An error occurred while fetching people" });
-    }
-    finally {
-        await prisma.$disconnect();
-    }
-});
-app.get("/getLeader", async (_request, response) => {
-    const prisma = new client_1.PrismaClient();
-    try {
-        const district_leaders = await prisma.district_leader.findMany();
-        response.status(200).send({
-            district_leaders,
         });
     }
     catch (error) {

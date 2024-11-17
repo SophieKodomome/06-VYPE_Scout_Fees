@@ -1,10 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 import express, { Request, Response } from "express";
+import cors from "cors";
 
 const app = express();
 const PORT = 8000;
 
 app.use(express.json());
+app.use(cors({
+  origin:"http://localhost:5173",
+}));
 
 
 app.listen(PORT, () => {
@@ -36,7 +40,7 @@ app.get("/getData", async (_request: Request, response: Response) => {
       districts,
       churches,
     };
-
+    console.log("get Data");
     response.status(200).send({
       data,
     });
