@@ -7,17 +7,21 @@ import { ref, onMounted } from "vue";
 
 const payments = ref<any[]>([]); // Array to store payment objects
 
-const data = ref<{ people: any[] } | null>(null);
+const data = ref<{ hasNotPaid: any[] } | null>(null);
 const isLoading = ref(true);
 const error = ref<string | null>(null);
 
 onMounted(async () => {
   try {
-    const response = await fetch("http://localhost:8000/getData");
+    const response = await fetch("http://localhost:8000/getPeople");
+
     if (!response.ok) throw new Error("Failed to fetch data");
 
     const result = await response.json();
-    data.value = result.data; // Assume the API sends the data in `result.data`
+    
+    data.value = result.data;
+
+    console.log(data.value);
   } catch (err: unknown) {
     if (err instanceof Error) {
       error.value = err.message;
@@ -68,7 +72,7 @@ async function handleSubmit() {
             <label for="individual" class="text-xl hover:text-blue-400">Individu</label>
             <select class="input" id="individual" v-model="payment.id">
               <option class="bg-gray-100" value="">La personne</option>
-              <option class="bg-gray-100" v-for="person in data?.people" :value="person.id">
+              <option class="bg-gray-100" v-for="person in data?.hasNotPaid" :value="person.id">
                 {{ person.name }}
               </option>
             </select>
