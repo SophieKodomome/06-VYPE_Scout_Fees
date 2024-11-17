@@ -2,27 +2,83 @@
 import MyButton from "@/components/MyButton.vue";
 import MyHeader from "@/components/MyHeader.vue";
 import MyLargeButton from "@/components/MyLargeButton.vue";
+import axios from "axios";
 import { ref, onMounted } from "vue";
 
-const payment = ref("");
+const payment = ref(null);
 
+const id = ref("");
+
+
+const data = ref<{ people: any[] } | null>(null);
+const isLoading = ref(true);
+const error = ref<string | null>(null);
+
+onMounted(async () => {
+    try {
+        const response = await fetch("http://localhost:8000/getData");
+        if (!response.ok) throw new Error("Failed to fetch data");
+
+        const result = await response.json();
+        data.value = result.data; // Assume the API sends the data in `result.data`
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            error.value = err.message;
+        } else {
+            error.value = String(err);
+        }
+    } finally {
+        isLoading.value = false;
+    }
+});
+
+function handleSubmit() {
+    const postData = {
+        id: id.value,
+        payment: payment.value,
+    };
+
+    // Send the POST request using Axios
+    axios.post("http://localhost:8000/updatePayment", postData)
+        .then((response) => {
+            console.log("Payment submitted successfully:", response.data);
+        })
+        .catch((error) => {
+            console.error("Error submitting payment:", error);
+        });
+}
 </script>
 <template>
     <main class="justify-items-center mt-16">
-        <div class="bg-gray-100 rounded-lg shadow-lg px-16 py-16 flex flex-col space-y-8">
+        <!-- Loading state -->
+        <div v-if="isLoading" class="text-center text-gray-700">Loading...</div>
+
+        <!-- Error state -->
+        <div v-else-if="error" class="text-center text-red-600">
+            {{ error }}
+        </div>
+        <div v-else class="bg-gray-100 rounded-lg shadow-lg px-16 py-16 flex flex-col space-y-8">
             <h1 class="uppercase font-bold text-2xl text-blue-600">Paiement des frais de participation</h1>
             <section class="flex flex-col space-y-8">
-                <section class="flex flex-col space-y-2">
-                    <label for="individual" class="text-xl hover:text-blue-400">Individu</label>
-                    <input class="input" placeholder="Name" id="individual" v-model="payment">
+                <section class="flex flex-col space-y-8">
+                    <section class="flex flex-col space-y-2">
+                        <label for="individual" class="text-xl hover:text-blue-400">Individu</label>
+                        <select class="input" id="individual" v-model="id">
+                            <option class="bg-gray-100" value="">La personne</option>
+                            <option class="bg-gray-100" v-for="person in data?.people" :value="person.id">
+                                {{ person.name }}
+                            </option>
+                        </select>
+                    </section>
+                    <section class="flex flex-col space-y-2">
+                        <label for="payment" class="text-xl hover:text-blue-400">Somme</label>
+                        <input class="input" placeholder="..." id="payment" v-model.number="payment">
+                    </section>
+                    <span class="border-b-2 border-blue-600"></span>
                 </section>
-                <section class="flex flex-col space-y-2">
-                    <label for="payment" class="text-xl hover:text-blue-400">Somme</label>
-                    <input class="input" placeholder="..." id="payment" v-model="payment">
-                </section>
-                <MyLargeButton/>
+                <MyLargeButton />
                 <section class=" justify-items-end">
-                    <MyButton/>
+                    <MyButton v-on:click="handleSubmit" />
                 </section>
             </section>
         </div>
@@ -31,20 +87,20 @@ const payment = ref("");
 </template>
 <style>
 .input {
-  border: 2px solid transparent;
-  height: 40px;
-  padding-left: 0.8em;
-  outline: none;
-  overflow: hidden;
-  background-color: #dcdcdc;
-  border-radius: 10px;
-  transition: all 0.5s;
+    border: 2px solid transparent;
+    height: 40px;
+    padding-left: 0.8em;
+    outline: none;
+    overflow: hidden;
+    background-color: #dcdcdc;
+    border-radius: 10px;
+    transition: all 0.5s;
 }
 
 .input:hover,
 .input:focus {
-  border: 2px solid #4A9DEC;
-  box-shadow: 0px 0px 0px 7px rgb(74, 157, 236, 20%);
-  background-color: white;
+    border: 2px solid #4A9DEC;
+    box-shadow: 0px 0px 0px 7px rgb(74, 157, 236, 20%);
+    background-color: white;
 }
 </style>

@@ -2,6 +2,8 @@ yarn create vue
 
 yarn run dev 
 
+yarn add axios
+
 yarn add -D tailwindcss@latest postcss@latest autoprefixer@latest
 npx tailwindcss init -p
 

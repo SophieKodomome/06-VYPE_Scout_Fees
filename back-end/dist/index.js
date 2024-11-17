@@ -53,17 +53,17 @@ app.get("/getData", async (_request, response) => {
         await prisma.$disconnect();
     }
 });
-app.post("/updatePerson", async (request, response) => {
+app.post("/updatePayment", async (request, response) => {
     const prisma = new client_1.PrismaClient();
     console.log(request.body);
-    const { id, number } = request.body;
+    const { id, payment } = request.body;
     try {
         const updatePayment = await prisma.person.update({
             where: {
                 id: id,
             },
             data: {
-                paid: number,
+                paid: payment,
             },
         });
         response.status(200).send({
@@ -71,10 +71,10 @@ app.post("/updatePerson", async (request, response) => {
         });
     }
     catch (error) {
-        console.error("Error fetching people:", error);
+        console.error("Error updating payment:", error);
         response
             .status(500)
-            .send({ error: "An error occurred while fetching people" });
+            .send({ error: "An error occurred while updating payment" });
     }
     finally {
         await prisma.$disconnect();
