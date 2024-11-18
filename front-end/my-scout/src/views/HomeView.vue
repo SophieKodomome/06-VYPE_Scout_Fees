@@ -56,9 +56,9 @@ console.log(data);
       <!-- Data display -->
       <div v-else>
         <aside class="fixed top-2/4 w-96 h-80 right-8 bg-gray-100 px-8 pb-8 rounded-lg shadow-md overflow-scroll">
-          <h2 class=" text-red-600 uppercase font-semibold border-b-2 bg-gray-100 w-96 py-4">Attention</h2>
+          <h2 class=" fixed text-red-600 uppercase font-semibold border-b-2 bg-gray-100 w-96 py-4">Attention</h2>
             <span v-for="person in data?.people">
-            <p v-if="person.paid < person.due">{{person.name}}n'a pas encore pay&eacute;(e) sa cotisation</p>
+            <p v-if="person.paid < person.due">{{person.name}} n'a pas encore pay&eacute;(e) sa cotisation</p>
           </span>
         </aside>
         <div class="flex flex-col space-y-4">
