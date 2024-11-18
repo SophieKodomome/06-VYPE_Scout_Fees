@@ -27,6 +27,15 @@ app.get("/getData", async (request, response) => {
         const diosezes = await prisma.dioseze.findMany();
         const districts = await prisma.dioseze.findMany();
         const churches = await prisma.dioseze.findMany();
+        const totalByChurch = await prisma.v_church_total_by_church.findMany();
+        const totalByDistrictConverted = totalByChurch.map((entry) => {
+            var _a, _b;
+            return ({
+                ...entry,
+                total_paid: (_a = entry.total_paid) === null || _a === void 0 ? void 0 : _a.toString(),
+                total_due: (_b = entry.total_due) === null || _b === void 0 ? void 0 : _b.toString(),
+            });
+        });
         const data = {
             people,
             churchApprentices,
@@ -37,6 +46,7 @@ app.get("/getData", async (request, response) => {
             diosezes,
             districts,
             churches,
+            totalByChurch: totalByDistrictConverted,
         };
         console.log("get Data");
         response.status(200).send({

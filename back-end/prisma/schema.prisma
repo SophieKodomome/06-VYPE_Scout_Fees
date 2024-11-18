@@ -98,17 +98,6 @@ view v_dioseze_leader {
   year         Int?
 }
 
-view v_district_leader {
-  id            Int     @unique
-  id_district   Int?
-  district_name String? @db.VarChar(100)
-  id_person     Int?
-  name          String? @db.VarChar(100)
-  paid          Int?
-  due           Int?
-  year          Int?
-}
-
 view v_church_leader {
   id          Int     @unique
   id_church   Int?
@@ -142,11 +131,41 @@ view v_church_member {
   year        Int?
 }
 
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view v_church_bills {
+  id_church   Int?
+  church_name String? @db.VarChar(100)
+  due         Int?
+  paid        Int?
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view v_church_total_by_church {
+  id_church   Int     @unique
+  church_name String? @db.VarChar(100)
+  total_paid  BigInt?
+  total_due   BigInt?
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view v_has_not_paid {
-  id   Int @unique
+  id   Int     @unique
   name String? @db.VarChar(100)
   paid Int?
   due  Int?
   year Int?
+}
 
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view v_district_leader {
+  id            Int     @unique
+  id_district   Int?
+  district_name String? @db.VarChar(100)
+  id_person     Int?
+  name          String? @db.VarChar(100)
+  paid          Int?
+  due           Int?
+  year          Int?
 }

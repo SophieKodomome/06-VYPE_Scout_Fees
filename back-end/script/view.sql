@@ -12,6 +12,16 @@ FROM Dioseze_Leader dl
 JOIN Person p ON dl.id_Person = p.id
 JOIN Dioseze d ON dl.id_Dioseze = d.id;
 
+CREATE VIEW v_District_Bill AS
+Select 
+    sum(paid),
+    district_name 
+from v_district_leader 
+group by district_name;
+
+SELECT
+
+FROM
 
 CREATE VIEW v_District_Leader AS
 SELECT 
@@ -26,6 +36,8 @@ SELECT
 FROM District_Leader dl
 JOIN Person p ON dl.id_Person = p.id
 JOIN District d ON dl.id_District = d.id;
+
+
 
 CREATE VIEW v_Church_Leader AS
 SELECT 
@@ -69,3 +81,32 @@ FROM Church_Member cm
 JOIN Person p ON cm.id_Person = p.id
 JOIN Church ch ON cm.id_Church = ch.id;
 
+SELECT sum(paid) AS totalPaid,sum(due) AS totaldue,church_name FROM (
+) GROUP BY church_name;
+
+CREATE VIEW v_church_bills AS
+SELECT
+    id_church,
+    church_name,
+    due,
+    paid
+FROM v_Church_Member
+UNION ALL
+SELECT 
+    id_church,
+    church_name,
+    due,
+    paid
+FROM v_Church_Apprentice
+UNION ALL
+SELECT
+    id_church,
+    church_name,
+    due,
+    paid
+FROM v_Church_Leader;
+
+CREATE VIEW V_church_total_by_church AS
+SELECT id_church,sum(paid) AS total_paid,sum(due) total_due FROM v_church_bills GROUP BY id_church;
+
+CREATE VIEW v_church_total_by_name AS

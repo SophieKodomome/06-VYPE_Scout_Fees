@@ -73,7 +73,7 @@ async function handleSubmit() {
             <select class="input" id="individual" v-model="payment.id">
               <option class="bg-gray-100" value="">La personne</option>
               <option class="bg-gray-100" v-for="person in data?.hasNotPaid" :value="person.id">
-                {{ person.name }} {{ person.due }}
+                {{ person.name }} Cotisation: {{ person.due }}
               </option>
             </select>
           </section>

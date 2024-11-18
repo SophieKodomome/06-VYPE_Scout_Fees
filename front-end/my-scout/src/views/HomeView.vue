@@ -12,15 +12,17 @@ const data =
     churchMembers: any[],
     diosezeLeaders: any[],
     districtLeaders: any[],
+    totalByChurch: any[],
   } | null>(null);
 const isLoading = ref(true);
 const error = ref<string | null>(null);
+const diosezeLeadersHasPaid = ref(true);
 const totalPaid = computed(() => {
-  return data.value?.people.reduce((sum, person) => sum + person.paid, 0) ?? 0;
+  return data.value?.districtLeaders.reduce((sum, person) => sum + person.paid, 0) ?? 0;
 });
 
 const totalDue = computed(() => {
-  return data.value?.people.reduce((sum, person) => sum + person.due, 0) ?? 0;
+  return data.value?.districtLeaders.reduce((sum, person) => sum + person.due, 0) ?? 0;
 });
 onMounted(async () => {
   try {
@@ -29,6 +31,7 @@ onMounted(async () => {
 
     const result = await response.json();
     data.value = result.data; // Assume the API sends the data in `result.data`
+
   } catch (err: unknown) {
     if (err instanceof Error) {
       error.value = err.message;
@@ -39,6 +42,14 @@ onMounted(async () => {
     isLoading.value = false;
   }
 });
+
+function checkDiosezePaid(diosezeLeaders: any[]) {
+  diosezeLeaders.forEach(diosezeLeader => {
+    if (diosezeLeader.paid != diosezeLeader.due) {
+      diosezeLeadersHasPaid.value = false;
+    }
+  });
+}
 
 console.log(data);
 </script>
@@ -55,11 +66,15 @@ console.log(data);
 
       <!-- Data display -->
       <div v-else>
-        <aside class="fixed top-2/4 w-96 h-80 right-8 bg-gray-100 px-8 pb-8 rounded-lg shadow-md overflow-scroll">
-          <h2 class=" fixed text-red-600 uppercase font-semibold border-b-2 bg-gray-100 w-96 py-4">Attention</h2>
-            <span v-for="person in data?.people">
-            <p v-if="person.paid < person.due">{{person.name}} n'a pas encore pay&eacute;(e) sa cotisation</p>
-          </span>
+        <aside class="fixed top-2/4 w-96 px-4 h-80 right-8 bg-gray-100 pb-8 rounded-lg shadow-md overflow-scroll">
+          <h2 class="fixed text-red-600 uppercase font-semibold border-b-2 bg-gray-100 rounded-t-lg w-96 py-4">Attention</h2>
+          <section class=" mt-16 pb-4">
+            <div class="flex flex-col bg-green-200 rounded-md mt-4 p-4" v-for="church in data?.totalByChurch">
+              <span class="font-semibold">{{ church.church_name }}</span>
+              <span class="font-semibold">Pay&eacute;: {{ church.total_paid }}</span>
+              <span class="font-semibold">Cotisation: {{ church.total_due }}</span>
+            </div>
+          </section>
         </aside>
         <div class="flex flex-col space-y-4">
           <section class="flex flex-row py-4 bg-blue-800 rounded-md">
@@ -93,12 +108,6 @@ console.log(data);
                 <h3 class="text-gray-800">{{ person.due }}</h3>
               </span>
             </section>
-          </div>
-          <div class="flex flex-row py-4 bg-green-200 rounded-md mt-4">
-            <span class="w-14"></span>
-            <span class="w-64 font-semibold">Totals:</span>
-            <span v-if="totalPaid < totalDue" class="w-48 font-semibold">{{ totalPaid }}</span>
-            <span class="w-48 font-semibold">{{ totalDue }}</span>
           </div>
         </div>
       </div>
