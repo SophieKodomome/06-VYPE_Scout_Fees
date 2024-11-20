@@ -106,7 +106,10 @@ SELECT
     paid
 FROM v_Church_Leader;
 
-CREATE VIEW V_church_total_by_church AS
-SELECT id_church,sum(paid) AS total_paid,sum(due) total_due FROM v_church_bills GROUP BY id_church;
+CREATE OR REPLACE VIEW v_has_not_paid AS
+SELECT * FROM Person WHERE paid <> due;
 
-CREATE VIEW v_church_total_by_name AS
+CREATE VIEW v_church_total_by_church AS
+SELECT id_church, church_name, SUM(paid) AS total_paid, SUM(due) AS total_due
+FROM v_church_bills
+GROUP BY id_church, church_name;

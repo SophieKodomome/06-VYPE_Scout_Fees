@@ -3,7 +3,7 @@ INSERT INTO Dioseze (name) VALUES
 
 INSERT INTO District (id_Dioseze, name) VALUES
 (1, 'Mahamasina'),
-(2, 'Farovohitra'),
+(1, 'Farovohitra');
 
 INSERT INTO Church (id_District, name) VALUES
 (1,'St Michel'),
@@ -53,11 +53,11 @@ INSERT INTO Church_Apprentice (id_Church, id_person) VALUES
 (4, (SELECT id FROM Person WHERE name = 'MP41'));
 
 INSERT INTO Church_Member (id_Church, id_person) VALUES
-(1, (SELECT id FROM Person WHERE name = 'BZ11 ')),
-(1, (SELECT id FROM Person WHERE name = 'BZ12 ')),
-(2, (SELECT id FROM Person WHERE name = 'BZ21 ')),
-(2, (SELECT id FROM Person WHERE name = 'BZ22 ')),
-(3, (SELECT id FROM Person WHERE name = 'BZ31 ')),
-(3, (SELECT id FROM Person WHERE name = 'BZ32 ')),
-(4, (SELECT id FROM Person WHERE name = 'BZ41 ')),
-(4, (SELECT id FROM Person WHERE name = 'BZ42 '));
+(1, (SELECT id FROM Person WHERE name ='BZ11')),
+(1, (SELECT id FROM Person WHERE name ='BZ12')),
+(2, (SELECT id FROM Person WHERE name ='BZ21')),
+(2, (SELECT id FROM Person WHERE name ='BZ22')),
+(3, (SELECT id FROM Person WHERE name ='BZ31')),
+(3, (SELECT id FROM Person WHERE name ='BZ32')),
+(4, (SELECT id FROM Person WHERE name ='BZ41')),
+(4, (SELECT id FROM Person WHERE name ='BZ42'));
