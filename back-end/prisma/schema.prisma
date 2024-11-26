@@ -53,3 +53,29 @@ model role {
   role   String   @db.VarChar(100)
   person person[]
 }
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view v_person_details {
+  person_id     Int     @unique
+  person_name   String? @db.VarChar(100)
+  role_name     String? @db.VarChar(100)
+  church_name   String? @db.VarChar(100)
+  district_name String? @db.VarChar(100)
+  dioseze_name  String? @db.VarChar(100)
+  due           Int?
+  paid          Int?
+  year          Int?
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view v_person_has_not_paid {
+  person_id     Int @unique
+  person_name   String? @db.VarChar(100)
+  role_name     String? @db.VarChar(100)
+  church_name   String? @db.VarChar(100)
+  district_name String? @db.VarChar(100)
+  dioseze_name  String? @db.VarChar(100)
+  due           Int?
+  paid          Int?
+  year          Int?
+}

@@ -1,6 +1,6 @@
 INSERT INTO Dioseze(name) VALUES ('null');
-INSERT INTO District(name,id_dioseze) VALUES ('null',SELECT id FROM Dioseze WHERE name = 'null');
-INSERT INTO Church(name,id_district) VALUES ('null',SELECT id FROM District WHERE name = 'null');
+INSERT INTO District(name,id_dioseze) VALUES ('null',(SELECT id FROM Dioseze WHERE name = 'null'));
+INSERT INTO Church(name,id_district) VALUES ('null',(SELECT id FROM District WHERE name = 'null'));
 
 -- Insert data into the Dioseze table
 INSERT INTO Dioseze(name) VALUES ('Tana');
@@ -32,13 +32,13 @@ INSERT INTO Person (name, id_role, id_dioseze, id_district, id_church, due, paid
     (SELECT id FROM Dioseze WHERE name ='null'),
     (SELECT id FROM District WHERE name ='null'),
     (SELECT id FROM Church WHERE name ='null'),
-    0, 25000, 2024),
+    25000, 0, 2024),
 ('F2', 
     (SELECT id FROM Role WHERE role = 'Ekipa Foibe'),
     (SELECT id FROM Dioseze WHERE name ='null'),
     (SELECT id FROM District WHERE name ='null'),
     (SELECT id FROM Church WHERE name ='null'),
-    0, 25000, 2024),
+    25000, 0, 2024),
 ('FIDI1', 
     (SELECT id FROM Role WHERE role = 'Filoha'),
     (SELECT id FROM Dioseze WHERE name = 'Tana'),

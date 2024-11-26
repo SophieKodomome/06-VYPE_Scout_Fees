@@ -19,34 +19,16 @@ app.get("/getData", async (request: Request, response: Response) => {
   const prisma = new PrismaClient();
 
   try {
-    const people = await prisma.person.findMany({orderBy: [{id:'asc'}]});
-    const churchApprentices = await prisma.v_church_apprentice.findMany();
-    const churchLeaders = await prisma.v_church_leader.findMany();
-    const churchMembers = await prisma.v_church_member.findMany();
-    const diosezeLeaders = await prisma.v_dioseze_leader.findMany();
-    const districtLeaders = await prisma.v_district_leader.findMany();
+    const people = await prisma.v_person_details.findMany({orderBy: {person_id:'asc'}});
     const diosezes = await prisma.dioseze.findMany();
-    const districts = await prisma.dioseze.findMany();
-    const churches = await prisma.dioseze.findMany();
-    const totalByChurch = await prisma.v_church_total_by_church.findMany();
-const totalByDistrictConverted = totalByChurch.map((entry) => ({
-  ...entry,
-  total_paid: entry.total_paid?.toString(),
-  total_due: entry.total_due?.toString(),
-}));
-
+    const districts = await prisma.district.findMany();
+    const churches = await prisma.church.findMany();
 
     const data = {
       people,
-      churchApprentices,
-      churchLeaders,
-      churchMembers,
-      diosezeLeaders,
-      districtLeaders,
       diosezes,
       districts,
       churches,
-      totalByChurch:totalByDistrictConverted,
     };
     console.log("get Data");
     response.status(200).send({
@@ -67,7 +49,7 @@ app.get("/getPeople", async (request: Request,response: Response) => {
 
   try {
     
-    const hasNotPaid = await prisma.v_has_not_paid.findMany({orderBy: [{id:'asc'}]});
+    const hasNotPaid = await prisma.v_person_has_not_paid.findMany({orderBy: {person_id:'asc'}});
     const data = {hasNotPaid};
     response.status(200).send({
       data,
@@ -90,9 +72,9 @@ app.post("/updatePayment", async (request: Request, response: Response) => {
   const { id, payment } = request.body;
 
   try {
-    const payingPerson = await prisma.person.findFirst({      
+    const payingPerson = await prisma.v_person_details.findFirst({      
       where:{
-        id:id,
+        person_id:id,
       }},
     )
 
