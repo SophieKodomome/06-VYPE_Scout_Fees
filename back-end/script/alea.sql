@@ -1,63 +1,161 @@
-INSERT INTO Dioseze (name) VALUES
-('Mahamasina');
+INSERT INTO Dioseze(name) VALUES ('null');
+INSERT INTO District(name,id_dioseze) VALUES ('null',SELECT id FROM Dioseze WHERE name = 'null');
+INSERT INTO Church(name,id_district) VALUES ('null',SELECT id FROM District WHERE name = 'null');
 
-INSERT INTO District (id_Dioseze, name) VALUES
-(1, 'Mahamasina'),
-(1, 'Farovohitra');
+-- Insert data into the Dioseze table
+INSERT INTO Dioseze(name) VALUES ('Tana');
 
-INSERT INTO Church (id_District, name) VALUES
-(1,'St Michel'),
-(1,'Ambatonilita'),
-(2,'Ekar Faravohitra'),
-(2,'Manjakaray');
+-- Insert data into the District table
+INSERT INTO District(name, id_dioseze) VALUES
+('Faritra Mahamasina', (SELECT id FROM Dioseze WHERE name = 'Tana')),
+('Faritra Faravohitra', (SELECT id FROM Dioseze WHERE name = 'Tana'));
 
-INSERT INTO Person (name,paid, due,year) VALUES
-('FIDI1',0, 10000,2024),
-('FIFA1',10000,10000,2024),
-('T11',5000,5000,2024),
-('T12',5000,5000,2024),
-('MP11',2000,2000,2024),
-('BZ11',1000,1000,2024),
-('BZ12',1000,1000,2024),
-('T21',5000,5000,2024),
-('MP21',2000,2000,2024),
-('BZ21',1000,1000,2024),
-('BZ22',1000,1000,2024),
-('FIFA2',0,10000,2024),
-('T31',0,5000,2024),
-('MP31',0,2000,2024),
-('BZ31',0,1000,2024),
-('BZ32',0,1000,2024),
-('T41',0,5000,2024),
-('MP41',0,2000,2024),
-('BZ41',0,1000,2024),
-('BZ42',0,1000,2024);
+-- Insert data into the Church table
+INSERT INTO Church(name, id_district) VALUES
+('Fivondronana St Michel', (SELECT id FROM District WHERE name = 'Faritra Mahamasina')),
+('Fivondronana Ambatonilita', (SELECT id FROM District WHERE name = 'Faritra Mahamasina')),
+('Fivondronana Faravohitra', (SELECT id FROM District WHERE name = 'Faritra Faravohitra')),
+('Fivondronana Manjakaray', (SELECT id FROM District WHERE name = 'Faritra Faravohitra'));
 
-INSERT INTO Dioseze_Leader (id_Dioseze, id_person) VALUES
-(1, (SELECT id FROM Person WHERE name = 'FIDI1'));
+-- Insert data into the Role table
+INSERT INTO Role(role) VALUES 
+('Ekipa Foibe'),
+('Filoha'),
+('Tonia'),
+('Mpiandraikitra'),
+('Beazina');
 
-INSERT INTO District_Leader (id_District, id_person) VALUES
-(1, (SELECT id FROM Person WHERE name = 'FIFA1')),
-(2, (SELECT id FROM Person WHERE name = 'FIFA2'));
-
-INSERT INTO Church_Leader (id_Church, id_person) VALUES
-(1, (SELECT id FROM Person WHERE name = 'T11')),
-(2, (SELECT id FROM Person WHERE name = 'T21')),
-(3, (SELECT id FROM Person WHERE name = 'T31')),
-(4, (SELECT id FROM Person WHERE name = 'T41'));
-
-INSERT INTO Church_Apprentice (id_Church, id_person) VALUES
-(1, (SELECT id FROM Person WHERE name = 'MP11')),
-(2, (SELECT id FROM Person WHERE name = 'MP21')),
-(3, (SELECT id FROM Person WHERE name = 'MP31')),
-(4, (SELECT id FROM Person WHERE name = 'MP41'));
-
-INSERT INTO Church_Member (id_Church, id_person) VALUES
-(1, (SELECT id FROM Person WHERE name ='BZ11')),
-(1, (SELECT id FROM Person WHERE name ='BZ12')),
-(2, (SELECT id FROM Person WHERE name ='BZ21')),
-(2, (SELECT id FROM Person WHERE name ='BZ22')),
-(3, (SELECT id FROM Person WHERE name ='BZ31')),
-(3, (SELECT id FROM Person WHERE name ='BZ32')),
-(4, (SELECT id FROM Person WHERE name ='BZ41')),
-(4, (SELECT id FROM Person WHERE name ='BZ42'));
+-- Insert data into the Person table with corrected conditions for 'null'
+INSERT INTO Person (name, id_role, id_dioseze, id_district, id_church, due, paid, year) VALUES
+('F1', 
+    (SELECT id FROM Role WHERE role = 'Ekipa Foibe'),
+    (SELECT id FROM Dioseze WHERE name ='null'),
+    (SELECT id FROM District WHERE name ='null'),
+    (SELECT id FROM Church WHERE name ='null'),
+    0, 25000, 2024),
+('F2', 
+    (SELECT id FROM Role WHERE role = 'Ekipa Foibe'),
+    (SELECT id FROM Dioseze WHERE name ='null'),
+    (SELECT id FROM District WHERE name ='null'),
+    (SELECT id FROM Church WHERE name ='null'),
+    0, 25000, 2024),
+('FIDI1', 
+    (SELECT id FROM Role WHERE role = 'Filoha'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'),
+    (SELECT id FROM District WHERE name ='null'),
+    (SELECT id FROM Church WHERE name ='null'), 
+    15000, 0, 2024),
+('FIFA1', 
+    (SELECT id FROM Role WHERE role = 'Filoha'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'), 
+    (SELECT id FROM District WHERE name = 'Faritra Mahamasina'),
+    (SELECT id FROM Church WHERE name ='null'),  
+    15000, 0, 2024),
+('T11', 
+    (SELECT id FROM Role WHERE role = 'Tonia'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'), 
+    (SELECT id FROM District WHERE name = 'Faritra Mahamasina'),
+    (SELECT id FROM Church WHERE name = 'Fivondronana St Michel'),
+    7000, 0, 2024),
+('T12', 
+    (SELECT id FROM Role WHERE role = 'Tonia'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'), 
+    (SELECT id FROM District WHERE name = 'Faritra Mahamasina'),
+    (SELECT id FROM Church WHERE name = 'Fivondronana St Michel'),
+    7000, 0, 2024),
+('MP11', 
+    (SELECT id FROM Role WHERE role = 'Mpiandraikitra'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'), 
+    (SELECT id FROM District WHERE name = 'Faritra Mahamasina'),
+    (SELECT id FROM Church WHERE name = 'Fivondronana St Michel'),
+    3000, 0, 2024),
+('BZ11', 
+    (SELECT id FROM Role WHERE role = 'Beazina'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'), 
+    (SELECT id FROM District WHERE name = 'Faritra Mahamasina'),
+    (SELECT id FROM Church WHERE name = 'Fivondronana St Michel'),
+    1500, 0, 2024),
+('BZ12', 
+    (SELECT id FROM Role WHERE role = 'Beazina'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'), 
+    (SELECT id FROM District WHERE name = 'Faritra Mahamasina'),
+    (SELECT id FROM Church WHERE name = 'Fivondronana St Michel'),
+    1500, 0, 2024),
+('T21', 
+    (SELECT id FROM Role WHERE role = 'Tonia'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'), 
+    (SELECT id FROM District WHERE name = 'Faritra Mahamasina'),
+    (SELECT id FROM Church WHERE name = 'Fivondronana Ambatonilita'),
+    7000, 0, 2024),
+('MP21', 
+    (SELECT id FROM Role WHERE role = 'Mpiandraikitra'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'), 
+    (SELECT id FROM District WHERE name = 'Faritra Mahamasina'),
+    (SELECT id FROM Church WHERE name = 'Fivondronana Ambatonilita'),
+    3000, 0, 2024),
+('BZ21', 
+    (SELECT id FROM Role WHERE role = 'Beazina'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'), 
+    (SELECT id FROM District WHERE name = 'Faritra Mahamasina'),
+    (SELECT id FROM Church WHERE name = 'Fivondronana Ambatonilita'),
+    1500, 0, 2024),
+('BZ22', 
+    (SELECT id FROM Role WHERE role = 'Beazina'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'), 
+    (SELECT id FROM District WHERE name = 'Faritra Mahamasina'),
+    (SELECT id FROM Church WHERE name = 'Fivondronana Ambatonilita'),
+    1500, 0, 2024),
+('FIFA1', 
+    (SELECT id FROM Role WHERE role = 'Filoha'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'), 
+    (SELECT id FROM District WHERE name = 'Faritra Faravohitra'),
+    (SELECT id FROM Church WHERE name ='null'),  
+    15000, 0, 2024),
+('T31', 
+    (SELECT id FROM Role WHERE role = 'Tonia'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'), 
+    (SELECT id FROM District WHERE name = 'Faritra Faravohitra'),
+    (SELECT id FROM Church WHERE name = 'Fivondronana Faravohitra'),
+    7000, 0, 2024),
+('MP31', 
+    (SELECT id FROM Role WHERE role = 'Mpiandraikitra'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'), 
+    (SELECT id FROM District WHERE name = 'Faritra Faravohitra'),
+    (SELECT id FROM Church WHERE name = 'Fivondronana Faravohitra'),
+    3000, 0, 2024),
+('BZ31', 
+    (SELECT id FROM Role WHERE role = 'Beazina'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'), 
+    (SELECT id FROM District WHERE name = 'Faritra Faravohitra'),
+    (SELECT id FROM Church WHERE name = 'Fivondronana Faravohitra'),
+    1500, 0, 2024),
+('BZ32', 
+    (SELECT id FROM Role WHERE role = 'Beazina'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'), 
+    (SELECT id FROM District WHERE name = 'Faritra Faravohitra'),
+    (SELECT id FROM Church WHERE name = 'Fivondronana Faravohitra'),
+    1500, 0, 2024),
+('T41', 
+    (SELECT id FROM Role WHERE role = 'Tonia'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'), 
+    (SELECT id FROM District WHERE name = 'Faritra Faravohitra'),
+    (SELECT id FROM Church WHERE name = 'Fivondronana Manjakaray'),
+    7000, 0, 2024),
+('MP41', 
+    (SELECT id FROM Role WHERE role = 'Mpiandraikitra'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'), 
+    (SELECT id FROM District WHERE name = 'Faritra Faravohitra'),
+    (SELECT id FROM Church WHERE name = 'Fivondronana Manjakaray'),
+    3000, 0, 2024),
+('BZ41', 
+    (SELECT id FROM Role WHERE role = 'Beazina'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'), 
+    (SELECT id FROM District WHERE name = 'Faritra Faravohitra'),
+    (SELECT id FROM Church WHERE name = 'Fivondronana Manjakaray'),
+    1500, 0, 2024),
+('BZ42', 
+    (SELECT id FROM Role WHERE role = 'Beazina'),
+    (SELECT id FROM Dioseze WHERE name = 'Tana'), 
+    (SELECT id FROM District WHERE name = 'Faritra Faravohitra'),
+    (SELECT id FROM Church WHERE name = 'Fivondronana Manjakaray'),
+    1500, 0, 2024);
