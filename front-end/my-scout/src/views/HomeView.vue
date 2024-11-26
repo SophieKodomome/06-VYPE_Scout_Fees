@@ -74,8 +74,11 @@ console.log(data);
             <span class="w-32">
               <h3 class="text-gray-100 font-semibold">Somme pay&eacute;</h3>
             </span>
-            <span class="w-32">
+            <span class="w-48">
               <h3 class="text-gray-100 font-semibold">Somme demand&eacute;</h3>
+            </span>
+            <span class="w-32">
+              <h3 class="text-gray-100 font-semibold">Ann&eacute;e</h3>
             </span>
           </section>
 
@@ -103,8 +106,11 @@ console.log(data);
                 <h3 v-if="person.paid < person.due" class="text-red-800">{{ person.paid }}</h3>
                 <h3 v-else class="text-green-600">{{ person.paid }}</h3>
               </span>
-              <span class="w-32">
+              <span class="w-48">
                 <h3 class="text-gray-800">{{ person.due }}</h3>
+              </span>
+              <span class="w-32">
+                <h3 class="text-gray-800 font-bold">{{ person.year }}</h3>
               </span>
             </section>
           </div>
