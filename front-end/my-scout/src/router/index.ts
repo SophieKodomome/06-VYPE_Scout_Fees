@@ -13,6 +13,11 @@ const router = createRouter({
       path: '/pay',
       name:'pay',
       component:() => import('../views/PayView.vue'),
+    },    
+    {
+      path: '/excel',
+      name:'excel',
+      component:() => import('../views/ExcelView.vue'),
     },
   ],
 })

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import MyHeader from "@/components/MyHeader.vue";
 import { computed } from "@vue/reactivity";
 import { ref, onMounted } from "vue";
 
