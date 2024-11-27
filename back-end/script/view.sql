@@ -8,7 +8,8 @@ SELECT
     dz.name AS dioseze_name,
     p.due,
     p.paid,
-    p.year
+    p.year,
+    p.birth_date
 FROM 
     person p
 LEFT JOIN role r ON p.id_role = r.id
