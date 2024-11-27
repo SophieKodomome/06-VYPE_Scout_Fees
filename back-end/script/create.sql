@@ -18,7 +18,8 @@ CREATE TABLE Church (
 );
 CREATE TABLE Role (
     id SERIAL PRIMARY KEY,
-    role VARCHAR(100) NOT NULL
+    role VARCHAR(100) NOT NULL,
+    due INT
 );
 
 CREATE TABLE Person (
@@ -31,6 +32,7 @@ CREATE TABLE Person (
     paid INT,
     due INT,
     year INT,
+    birth_date date NOT NULL,
     FOREIGN KEY (id_role) REFERENCES Role (id) ON DELETE CASCADE,
     FOREIGN KEY (id_dioseze) REFERENCES Dioseze (id) ON DELETE CASCADE,
     FOREIGN KEY (id_district) REFERENCES District (id) ON DELETE CASCADE,
