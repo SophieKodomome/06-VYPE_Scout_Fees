@@ -16,26 +16,5 @@ LEFT JOIN church c ON p.id_church = c.id
 LEFT JOIN district d ON p.id_district = d.id
 LEFT JOIN dioseze dz ON p.id_dioseze = dz.id;
 
-CREATE VIEW v_church_totals AS
-SELECT 
-    church_name, 
-    SUM(paid) AS total_paid,
-    SUM(due) AS total_due
-FROM 
-    v_person_details
-WHERE NOT
-    church_name ='null'
-GROUP BY 
-    church_name;
-
-CREATE VIEW v_district_totals AS
-SELECT 
-    district_name, 
-    SUM(paid) AS total_paid,
-    SUM(due) AS total_due
-FROM 
-    v_person_details
-WHERE NOT
-    district_name ='null'
-GROUP BY 
-    district_name;
+CREATE VIEW v_person_has_not_paid AS
+SELECT * FROM v_person_details WHERE paid <> due; 
