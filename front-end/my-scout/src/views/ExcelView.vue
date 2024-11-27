@@ -2,8 +2,9 @@
 import MyButton from "@/components/MyButton.vue";
 import * as XLSX from "xlsx";
 import { ref } from "vue";
+import axios from "axios";
 
-const requiredHeaders = ["year", "id","birth date", "name", "role", "dioseze", "district", "church", "paid"];
+const requiredHeaders = ["year", "birthday", "id", "name", "role", "dioseze", "district", "church", "paid"];
 const fileError = ref<string | null>(null);
 const isFileValid = ref(false);
 const uploadedFile = ref<File | null>(null); // Store the uploaded file reference
@@ -20,7 +21,7 @@ function handleFileUpload(event: Event) {
     return;
   }
 
-  uploadedFile.value = file; // Store the file for later use
+  uploadedFile.value = file;
 
   const reader = new FileReader();
 
@@ -31,20 +32,57 @@ function handleFileUpload(event: Event) {
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
 
-      // Parse the headers
+      // Parse the headers and normalize them
       const headers = XLSX.utils.sheet_to_json(sheet, { header: 1 })[0] as string[];
+      console.log("Parsed Headers:", headers);
+      const normalizedHeaders = headers.map((header) => header.trim().toLowerCase());
 
       // Validate headers
-      const isValid = requiredHeaders.every((header) => headers.includes(header));
+      const isValid = requiredHeaders.every((header) =>
+        normalizedHeaders.includes(header.toLowerCase())
+      );
       if (isValid) {
         fileError.value = null;
         isFileValid.value = true;
-        parsedData.value = XLSX.utils.sheet_to_json(sheet); // Parse entire sheet data
+
+        // Parse the sheet data and handle dates/empty values
+        const rawData = XLSX.utils.sheet_to_json(sheet, { defval: "", raw: false });
+        parsedData.value = rawData.map((row: any) => {
+          const formattedRow: any = {};
+
+          // Map headers and normalize empty columns
+          for (const [key, value] of Object.entries(row)) {
+            const normalizedKey = key.trim().toLowerCase();
+
+            // Handle date fields
+            if (normalizedKey === "birthday" && value) {
+              const dateValue = new Date(value);
+              if (!isNaN(dateValue.getTime())) {
+                formattedRow[normalizedKey] = XLSX.SSF.format("yyyy/mm/dd", dateValue);
+              } else {
+                formattedRow[normalizedKey] = ""; // Handle invalid dates
+              }
+            } else {
+              formattedRow[normalizedKey] = value || ""; // Default empty values
+            }
+          }
+
+          // Ensure required fields are included
+          requiredHeaders.forEach((header) => {
+            if (!(header in formattedRow)) {
+              formattedRow[header] = ""; // Fill missing columns with empty strings
+            }
+          });
+
+          return formattedRow;
+        });
+
       } else {
         fileError.value = `Invalid headers. Expected: ${requiredHeaders.join(", ")}`;
         isFileValid.value = false;
       }
     } catch (error) {
+      console.error("Error parsing the file:", error);
       fileError.value = "Error reading the file.";
       isFileValid.value = false;
     }
@@ -58,7 +96,8 @@ function handleFileUpload(event: Event) {
   reader.readAsBinaryString(file);
 }
 
-function handleSubmit() {
+
+async function handleSubmit() {
   if (!isFileValid.value) {
     fileError.value = "Please upload a valid file before submitting.";
     return;
@@ -69,9 +108,28 @@ function handleSubmit() {
     return;
   }
 
-  // Display parsed data (already parsed in `handleFileUpload`)
   console.log("Parsed Data:", parsedData.value);
+
+  try {
+    const response = await axios.post("http://localhost:8000/insertPayment", parsedData.value);
+    console.log("Payment submitted successfully:", response.data);
+  } catch (error) {
+    console.error("Error submitting payment:", error);
+  }
 }
+
+function formatExcelDate(value: number | string): string {
+  // Check if value is a valid number (Excel serial date)
+  if (typeof value === "number") {
+    // Convert Excel serial date to JavaScript Date
+    const jsDate = new Date(Math.round((value - 25569) * 864e5)); // Adjust from Excel epoch
+    return jsDate.toISOString().split("T")[0].replace(/-/g, "/"); // Format as yyyy/mm/dd
+  }
+
+  // If value is already a string or invalid, return as-is or handle separately
+  return String(value);
+}
+
 </script>
 
 <template>
@@ -90,18 +148,15 @@ function handleSubmit() {
         <table class="table-auto border-collapse border border-gray-400 w-full mt-2">
           <thead>
             <tr>
-              <th v-for="(header, index) in Object.keys(parsedData[0])" :key="index" class="border border-gray-300 px-4 py-2 text-left">
+              <th v-for="(header, index) in Object.keys(parsedData[0])" :key="index"
+                class="border border-gray-300 px-4 py-2 text-left">
                 {{ header }}
               </th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(row, rowIndex) in parsedData" :key="rowIndex">
-              <td
-                v-for="(value, key) in row"
-                :key="key"
-                class="border border-gray-300 px-4 py-2"
-              >
+              <td v-for="(value, key) in row" :key="key" class="border border-gray-300 px-4 py-2">
                 {{ value }}
               </td>
             </tr>
