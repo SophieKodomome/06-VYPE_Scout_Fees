@@ -3,7 +3,7 @@ import MyButton from "@/components/MyButton.vue";
 import * as XLSX from "xlsx";
 import { ref } from "vue";
 
-const requiredHeaders = ["year", "id", "name", "role", "dioseze", "district", "church", "paid"];
+const requiredHeaders = ["year", "id","birth date", "name", "role", "dioseze", "district", "church", "paid"];
 const fileError = ref<string | null>(null);
 const isFileValid = ref(false);
 const uploadedFile = ref<File | null>(null); // Store the uploaded file reference
@@ -75,7 +75,7 @@ function handleSubmit() {
 </script>
 
 <template>
-  <main class="mt-16">
+  <main class="justify-items-center mt-16">
     <div class="bg-gray-100 rounded-lg shadow-lg px-16 py-16 flex flex-col space-y-8">
       <h1 class="uppercase font-bold text-2xl text-blue-600">Upload Excel File</h1>
 
