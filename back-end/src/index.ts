@@ -102,13 +102,34 @@ app.post("/insertPayment", async (request: Request, response: Response) => {
           name: payment.church,
         },
       });
-      if(role && dioseze && district && church && role.due == payment.paid){
+      if (role && dioseze && district && church && role.due == payment.paid) {
+        const birthDate = new Date(payment.birthday); // Parse the birthday
+
+        // Validate the parsed date
+        if (isNaN(birthDate.getTime())) {
+          console.error("Invalid birth date format:", payment.birthday);
+          return;
+        }
+
+        const insert = await prisma.person.create({
+          data: {
+            id: parseInt(payment.id),
+            name: payment.name,
+            id_role: role.id,
+            id_dioseze: dioseze.id,
+            id_district: district.id,
+            id_church: church.id,
+            paid: parseInt(payment.paid),
+            due: role.due,
+            birth_date: birthDate, // Use the Date object
+          },
+        });
+
         console.log(`Payment validation successful:`, payment);
       }
     }
 
-  response.status(200).send({ message: "Payments processed successfully." });
-
+    response.status(200).send({ message: "Payments processed successfully." });
   } catch (error) {
     console.error("Error updating payment:", error);
     response
