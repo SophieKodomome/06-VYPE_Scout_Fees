@@ -42,6 +42,7 @@ model person {
   paid        Int?
   due         Int?
   year        Int?
+  birth_date  DateTime @db.Date
   church      church   @relation(fields: [id_church], references: [id], onDelete: Cascade, onUpdate: NoAction)
   dioseze     dioseze  @relation(fields: [id_dioseze], references: [id], onDelete: Cascade, onUpdate: NoAction)
   district    district @relation(fields: [id_district], references: [id], onDelete: Cascade, onUpdate: NoAction)
@@ -51,31 +52,34 @@ model person {
 model role {
   id     Int      @id @default(autoincrement())
   role   String   @db.VarChar(100)
+  due    Int?
   person person[]
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view v_person_details {
-  person_id     Int     @unique
-  person_name   String? @db.VarChar(100)
-  role_name     String? @db.VarChar(100)
-  church_name   String? @db.VarChar(100)
-  district_name String? @db.VarChar(100)
-  dioseze_name  String? @db.VarChar(100)
+  person_id     Int       @unique
+  person_name   String?   @db.VarChar(100)
+  role_name     String?   @db.VarChar(100)
+  church_name   String?   @db.VarChar(100)
+  district_name String?   @db.VarChar(100)
+  dioseze_name  String?   @db.VarChar(100)
   due           Int?
   paid          Int?
   year          Int?
+  birth_date    DateTime? @db.Date
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view v_person_has_not_paid {
-  person_id     Int @unique
-  person_name   String? @db.VarChar(100)
-  role_name     String? @db.VarChar(100)
-  church_name   String? @db.VarChar(100)
-  district_name String? @db.VarChar(100)
-  dioseze_name  String? @db.VarChar(100)
+  person_id     Int       @unique
+  person_name   String?   @db.VarChar(100)
+  role_name     String?   @db.VarChar(100)
+  church_name   String?   @db.VarChar(100)
+  district_name String?   @db.VarChar(100)
+  dioseze_name  String?   @db.VarChar(100)
   due           Int?
   paid          Int?
   year          Int?
+  birth_date    DateTime? @db.Date
 }
