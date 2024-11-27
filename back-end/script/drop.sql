@@ -2,5 +2,6 @@ DROP TABLE IF EXISTS
     Dioseze,
     District,
     Church,
-    Person
+    Person,
+    Role
 CASCADE;
