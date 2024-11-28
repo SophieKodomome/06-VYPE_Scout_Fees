@@ -113,7 +113,6 @@ app.post("/insertPayment", async (request: Request, response: Response) => {
 
         const insert = await prisma.person.create({
           data: {
-            id: parseInt(payment.id),
             name: payment.name,
             id_role: role.id,
             id_dioseze: dioseze.id,
@@ -121,6 +120,7 @@ app.post("/insertPayment", async (request: Request, response: Response) => {
             id_church: church.id,
             paid: parseInt(payment.paid),
             due: role.due,
+            year: parseInt(payment.year),
             birth_date: birthDate, // Use the Date object
           },
         });
