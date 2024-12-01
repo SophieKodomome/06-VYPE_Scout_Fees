@@ -18,6 +18,11 @@ const router = createRouter({
       path: '/excel',
       name:'excel',
       component:() => import('../views/ExcelView.vue'),
+    }, 
+    {
+      path: '/error',
+      name:'error',
+      component:() => import('../views/ErrorView.vue'),
     },
   ],
 })

@@ -56,6 +56,12 @@ model role {
   person person[]
 }
 
+model error {
+  id    Int       @id @default(autoincrement())
+  motif String    @db.VarChar(255)
+  date  DateTime? @default(now()) @db.Timestamp(6)
+}
+
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view v_person_details {
   person_id     Int       @unique
