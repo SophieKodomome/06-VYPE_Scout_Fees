@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "@vue/reactivity";
 import { ref, onMounted } from "vue";
+import * as XLSX from "xlsx"; // Import XLSX library
 
 // State variables
 const data =
@@ -9,6 +10,7 @@ const data =
   } | null>(null);
 const isLoading = ref(true);
 const error = ref<string | null>(null);
+
 onMounted(async () => {
   try {
     const response = await fetch("http://localhost:8000/getError");
@@ -28,8 +30,23 @@ onMounted(async () => {
   }
 });
 
-console.log(data);
+// Function to export data to Excel
+const exportToExcel = () => {
+  if (!data.value?.error || data.value.error.length === 0) {
+    alert("No data to export");
+    return;
+  }
+
+  // Prepare data for Excel
+  const worksheet = XLSX.utils.json_to_sheet(data.value.error);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Errors");
+
+  // Trigger download
+  XLSX.writeFile(workbook, "Error_List.xlsx");
+};
 </script>
+
 <template>
   <main>
     <div class="mx-24 my-12 flex flex-col space-y-4">
@@ -43,17 +60,15 @@ console.log(data);
 
       <!-- Data display -->
       <div v-else>
-        <!---<aside class="fixed top-2/4 w-96 px-4 h-80 right-8 bg-gray-100 pb-8 rounded-lg shadow-md overflow-scroll">
-          <h2 class="fixed text-red-600 uppercase font-semibold border-b-2 bg-gray-100 rounded-t-lg w-96 py-4">Attention</h2>
-          <section class=" mt-16 pb-4">
-            <div class="flex flex-col bg-green-200 rounded-md mt-4 p-4" v-for="church in data?.totalByChurch">
-              <span class="font-semibold">{{ church.church_name }}</span>
-              <span class="font-semibold">Pay&eacute;: {{ church.total_paid }}</span>
-              <span class="font-semibold">Cotisation: {{ church.total_due }}</span>
-            </div>
-          </section>
-        </aside>-->
-        <div class="flex flex-col space-y-4">
+        <!-- Button to export to Excel -->
+        <button
+          class="bg-green-500 text-white px-4 py-2 rounded-lg"
+          @click="exportToExcel"
+        >
+          Download Error List as Excel
+        </button>
+
+        <div class="flex flex-col space-y-4 mt-4">
           <section class="flex flex-row py-4 bg-blue-800 rounded-md">
             <span class="w-14">
               <h3 class="text-gray-100 font-semibold justify-self-center">ID</h3>
@@ -73,7 +88,7 @@ console.log(data);
               </span>
               <span class="w-4/5">
                 <h3 class="text-gray-800">{{ error.motif }}</h3>
-              </span> 
+              </span>
               <span class="w-32">
                 <h3 class="text-gray-800">{{ error.date }}</h3>
               </span>
