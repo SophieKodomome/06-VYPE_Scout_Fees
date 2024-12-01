@@ -64,7 +64,7 @@ app.get("/getError", async (request: Request, response: Response) => {
     await prisma.$disconnect();
   }
 });
-app.get("/getPeople", async (request: Request, response: Response) => {
+/*app.get("/getPeople", async (request: Request, response: Response) => {
   console.log("getPeople");
   const prisma = new PrismaClient();
 
@@ -86,80 +86,66 @@ app.get("/getPeople", async (request: Request, response: Response) => {
     await prisma.$disconnect();
   }
 });
-
+*/
 app.post("/insertPayment", async (request: Request, response: Response) => {
   console.log("insertPayment");
 
   const prisma = new PrismaClient();
-  const payments = request.body;
+  const payment = request.body;
 
   try {
-    for (const payment of payments) {
-      payment.dioseze = payment.dioseze || "null";
-      payment.district = payment.district || "null";
-      payment.church = payment.church || "null";
+      payment.diosezy = payment.diosezy || "null";
+      payment.faritra = payment.faritra || "null";
+      payment.fivondronana = payment.fivondronana || "null";
 
-      const role = await prisma.role.findFirst({
-        where: {
-          role: payment.role,
-        },
-      });
-      const dioseze = await prisma.dioseze.findFirst({
-        where: {
-          name: payment.dioseze,
-        },
-      });
-      const district = await prisma.district.findFirst({
-        where: {
-          name: payment.district,
-        },
-      });
-      const church = await prisma.church.findFirst({
-        where: {
-          name: payment.church,
-        },
-      });
+      const birthDate = new Date(payment.date_de_naissance); // Parse the date_de_naissance
 
-      const birthDate = new Date(payment.birthday); // Parse the birthday
-
+      
       // Validate the parsed date
-      if (isNaN(birthDate.getTime())) {
-        console.error("Invalid birth date format:", payment.birthday);
-        continue; // Skip this payment
-      }
+      //if (isNaN(birthDate.getTime())) {
+        //console.error("Invalid birth date format:", payment.date_de_naissance);
+      //}
 
       // Calculate age
       const paymentYear = parseInt(payment.year, 10);
       const age = paymentYear - birthDate.getFullYear();
 
-      if (role && dioseze && district && church && role.due == payment.paid) {
-        console.log(age);
-        console.log(role?.role);
-        if (role?.role == "Beazina" && age > 18) {
-          console.error(
-            `Skipping payment for ${payment.name}: Age ${age} is less than 18.`
-          );
-        } else {
-          const insert = await prisma.person.create({
-            data: {
-              name: payment.name,
-              id_role: role.id,
-              id_dioseze: dioseze.id,
-              id_district: district.id,
-              id_church: church.id,
-              paid: parseInt(payment.paid, 10),
-              due: role.due,
-              year: parseInt(payment.year, 10),
-              birth_date: birthDate, // Use the Date object
-            },
-          });
-
-          console.log(`Payment validation successful for ${payment.name}`);
+      const role = await prisma.role.findFirst(
+        {where: 
+          { 
+            role: payment.categorie,
+            year: parseInt(payment.annee)
+          }
         }
-      }
-    }
+      );
 
-    response.status(200).send({ message: "Payments processed successfully." });
+      console.log(role);
+
+      const alreadyPaid = await prisma.v_person_details.findFirst(
+        {
+          where:
+          {
+            id_string: payment.id,
+            year: parseInt(payment.annee)
+          }
+        }
+      );
+      
+      if(role){
+        if(payment.vola == role.subscription){
+          if(!alreadyPaid){
+            console.log("Payment successful :"+payment.id);
+          }else{
+            console.log("error on " + payment.id +": use already paid this year");
+          }
+        }else{
+          console.log("error on " + payment.id +": payment doesn't match subscription");
+        }
+      }else{
+        console.log("error on " + payment.id +": role does'nt");
+      }
+      console.log(payment);
+    //response.status(200).send({ message: "Payments processed successfully." });
   } catch (error) {
     console.error("Error processing payment:", error);
     response
@@ -169,8 +155,7 @@ app.post("/insertPayment", async (request: Request, response: Response) => {
     await prisma.$disconnect();
   }
 });
-
-app.post("/updatePayment", async (request: Request, response: Response) => {
+/*app.post("/updatePayment", async (request: Request, response: Response) => {
   console.log("updatePayment");
   const prisma = new PrismaClient();
 
@@ -207,4 +192,4 @@ app.post("/updatePayment", async (request: Request, response: Response) => {
   } finally {
     await prisma.$disconnect();
   }
-});
+});*/
