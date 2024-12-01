@@ -1,5 +1,6 @@
 SELECT
   p.id,
+  p.id_string,
   r.id AS id_role,
   r.role,
   p.church,
