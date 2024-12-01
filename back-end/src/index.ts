@@ -21,17 +21,10 @@ app.get("/getData", async (request: Request, response: Response) => {
 
   try {
     const people = await prisma.v_person_details.findMany({
-      orderBy: { person_id: "asc" },
+      orderBy: { id: "asc" },
     });
-    const diosezes = await prisma.dioseze.findMany();
-    const districts = await prisma.district.findMany();
-    const churches = await prisma.church.findMany();
-
     const data = {
       people,
-      diosezes,
-      districts,
-      churches,
     };
     console.log("get Data");
     response.status(200).send({

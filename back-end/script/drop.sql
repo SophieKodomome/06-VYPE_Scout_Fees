@@ -3,5 +3,6 @@ DROP TABLE IF EXISTS
     District,
     Church,
     Person,
-    Role
+    Role,
+    Error
 CASCADE;

@@ -8,9 +8,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model error {
+  id    Int       @id @default(autoincrement())
+  motif String    @db.VarChar(255)
+  date  DateTime? @default(now()) @db.Timestamp(6)
+}
+
 model person {
-  id         String   @db.VarChar(100)
+  id         Int      @id @default(autoincrement())
+  id_string  String   @db.VarChar(100)
   id_role    Int
   dioseze    String   @db.VarChar(100)
   district   String   @db.VarChar(100)
@@ -19,8 +25,6 @@ model person {
   year       Int?
   birth_date DateTime @db.Date
   role       role     @relation(fields: [id_role], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@ignore
 }
 
 model role {
@@ -29,18 +33,13 @@ model role {
   subscription   Int
   year           Int
   age_limitation Int
-  person         person[] @ignore
-}
-
-model error {
-  id    Int       @id @default(autoincrement())
-  motif String    @db.VarChar(255)
-  date  DateTime? @default(now()) @db.Timestamp(6)
+  person         person[]
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view v_person_details {
-  id             String?   @db.VarChar(100)
+  id             Int @unique
+  id_string      String?   @db.VarChar(100)
   id_role        Int?
   role           String?   @db.VarChar(100)
   church         String?   @db.VarChar(100)
