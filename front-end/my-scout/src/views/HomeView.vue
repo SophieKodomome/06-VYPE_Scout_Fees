@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 
 // State variables
 const data =
@@ -41,7 +41,38 @@ onMounted(async () => {
   }
 });
 
-console.log(data);
+// Computed properties for summaries
+const totalPaymentByYear = computed(() => {
+  if (!data.value) return {};
+  return data.value.people.reduce((acc, person) => {
+    if (person.year && person.payment) {
+      acc[person.year] = (acc[person.year] || 0) + person.payment;
+    }
+    return acc;
+  }, {} as Record<number, number>);
+});
+
+const totalPaymentByDistrictAndYear = computed(() => {
+  if (!data.value) return {};
+  return data.value.people.reduce((acc, person) => {
+    if (person.year && person.district && person.payment) {
+      const key = `${person.district}-${person.year}`;
+      acc[key] = (acc[key] || 0) + person.payment;
+    }
+    return acc;
+  }, {} as Record<string, number>);
+});
+
+const totalPaymentByChurchAndYear = computed(() => {
+  if (!data.value) return {};
+  return data.value.people.reduce((acc, person) => {
+    if (person.year && person.church && person.payment) {
+      const key = `${person.church}-${person.year}`;
+      acc[key] = (acc[key] || 0) + person.payment;
+    }
+    return acc;
+  }, {} as Record<string, number>);
+});
 </script>
 
 <template>
@@ -57,40 +88,88 @@ console.log(data);
 
       <!-- Data display -->
       <div v-else>
-        <div class="flex flex-col space-y-4">
-          <!-- Table header -->
-          <section class="flex flex-row py-4 bg-blue-800 rounded-md">
-            <span class="w-14"><h3 class="text-gray-100 font-semibold">ID</h3></span>
-            <span class="w-32"><h3 class="text-gray-100 font-semibold">ID String</h3></span>
-            <span class="w-32"><h3 class="text-gray-100 font-semibold">Role</h3></span>
-            <span class="w-48"><h3 class="text-gray-100 font-semibold">Diocese</h3></span>
-            <span class="w-48"><h3 class="text-gray-100 font-semibold">District</h3></span>
-            <span class="w-64"><h3 class="text-gray-100 font-semibold">Church</h3></span>
-            <span class="w-32"><h3 class="text-gray-100 font-semibold">Subscription</h3></span>
-            <span class="w-32"><h3 class="text-gray-100 font-semibold">Payment</h3></span>
-            <span class="w-32"><h3 class="text-gray-100 font-semibold">Year</h3></span>
-            <span class="w-48"><h3 class="text-gray-100 font-semibold">Birth Date</h3></span>
-            <span class="w-32"><h3 class="text-gray-100 font-semibold">Age Limit</h3></span>
-          </section>
-
-          <!-- Table rows -->
-          <div class="bg-gray-300 flex flex-col rounded-md">
-            <section v-for="person in data.people" :key="person.id" class="flex flex-row py-4 bg-gray-200 rounded-md">
-              <span class="w-14"><h3 class="text-gray-800">{{ person.id }}</h3></span>
-              <span class="w-32"><h3 class="text-gray-800">{{ person.id_string || 'N/A' }}</h3></span>
-              <span class="w-32"><h3 class="text-gray-800">{{ person.role || 'N/A' }}</h3></span>
-              <span class="w-48"><h3 class="text-gray-800">{{ person.dioseze || 'N/A' }}</h3></span>
-              <span class="w-48"><h3 class="text-gray-800">{{ person.district || 'N/A' }}</h3></span>
-              <span class="w-64"><h3 class="text-gray-800">{{ person.church || 'N/A' }}</h3></span>
-              <span class="w-32"><h3 class="text-gray-800">{{ person.subscription || 'N/A' }}</h3></span>
-              <span class="w-32"><h3 class="text-gray-800">{{ person.payment || 'N/A' }}</h3></span>
-              <span class="w-32"><h3 class="text-gray-800">{{ person.year || 'N/A' }}</h3></span>
-              <span class="w-48"><h3 class="text-gray-800">{{ person.birth_date || 'N/A' }}</h3></span>
-              <span class="w-32"><h3 class="text-gray-800">{{ person.age_limitation || 'N/A' }}</h3></span>
+        <!-- Scrollable table -->
+        <div class="border rounded-md">
+          <div class="flex flex-col space-y-4">
+            <!-- Table header -->
+            <section class="flex flex-row py-4 bg-blue-800 rounded-md min-w-max">
+              <span class="w-32 ml-4"><h3 class="text-gray-100 font-semibold">ID String</h3></span>
+              <span class="w-32"><h3 class="text-gray-100 font-semibold">Role</h3></span>
+              <span class="w-48"><h3 class="text-gray-100 font-semibold">Diocese</h3></span>
+              <span class="w-48"><h3 class="text-gray-100 font-semibold">District</h3></span>
+              <span class="w-64"><h3 class="text-gray-100 font-semibold">Church</h3></span>
+              <span class="w-32"><h3 class="text-gray-100 font-semibold">Subscription</h3></span>
+              <span class="w-32"><h3 class="text-gray-100 font-semibold">Payment</h3></span>
+              <span class="w-32"><h3 class="text-gray-100 font-semibold">Year</h3></span>
+              <span class="w-48"><h3 class="text-gray-100 font-semibold">Birth Date</h3></span>
+              <span class="w-32"><h3 class="text-gray-100 font-semibold">Age Limit</h3></span>
             </section>
+
+            <!-- Table rows -->
+            <div class="bg-gray-300 flex flex-col rounded-md overflow-x-auto max-h-[400px] overflow-y-auto ">
+              <section
+                v-for="person in data.people"
+                :key="person.id"
+                class="flex flex-row py-4 bg-gray-200 rounded-md min-w-max"
+              >
+                <span class="w-32 ml-4"><h3 class="text-gray-800">{{ person.id_string}}</h3></span>
+                <span class="w-32"><h3 class="text-gray-800">{{ person.role}}</h3></span>
+                <span class="w-48"><h3 class="text-gray-800">{{ person.dioseze}}</h3></span>
+                <span class="w-48"><h3 class="text-gray-800">{{ person.district}}</h3></span>
+                <span class="w-64"><h3 class="text-gray-800">{{ person.church}}</h3></span>
+                <span class="w-32"><h3 class="text-gray-800">{{ person.subscription}}</h3></span>
+                <span class="w-32"><h3 class="text-gray-800">{{ person.payment}}</h3></span>
+                <span class="w-32"><h3 class="text-gray-800">{{ person.year}}</h3></span>
+                <span class="w-48"><h3 class="text-gray-800">{{ person.birth_date}}</h3></span>
+                <span class="w-32"><h3 class="text-gray-800">{{ person.age_limitation}}</h3></span>
+              </section>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary tables -->
+        <div class="mt-8">
+          <!-- Total Payment by Year -->
+          <h3 class="font-semibold text-lg">Total Payment by Year</h3>
+          <div class="overflow-y-auto max-h-[200px] border rounded-md p-4">
+            <ul>
+              <li
+                v-for="(total, year) in totalPaymentByYear"
+                :key="year"
+              >
+                Year {{ year }}: {{ total }}
+              </li>
+            </ul>
+          </div>
+
+          <!-- Total Payment by District per Year -->
+          <h3 class="font-semibold text-lg mt-4">Total Payment by District per Year</h3>
+          <div class="overflow-y-auto max-h-[200px] border rounded-md p-4">
+            <ul>
+              <li
+                v-for="(total, key) in totalPaymentByDistrictAndYear"
+                :key="key"
+              >
+                {{ key.split('-')[0] }} (Year {{ key.split('-')[1] }}): {{ total }}
+              </li>
+            </ul>
+          </div>
+
+          <!-- Total Payment by Church per Year -->
+          <h3 class="font-semibold text-lg mt-4">Total Payment by Church per Year</h3>
+          <div class="overflow-y-auto max-h-[200px] border rounded-md p-4">
+            <ul>
+              <li
+                v-for="(total, key) in totalPaymentByChurchAndYear"
+                :key="key"
+              >
+                {{ key.split('-')[0] }} (Year {{ key.split('-')[1] }}): {{ total }}
+              </li>
+            </ul>
           </div>
         </div>
       </div>
     </div>
   </main>
 </template>
+

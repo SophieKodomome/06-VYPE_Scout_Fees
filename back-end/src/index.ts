@@ -94,58 +94,91 @@ app.post("/insertPayment", async (request: Request, response: Response) => {
   const payment = request.body;
 
   try {
-      payment.diosezy = payment.diosezy || "null";
-      payment.faritra = payment.faritra || "null";
-      payment.fivondronana = payment.fivondronana || "null";
+    payment.diosezy = payment.diosezy || "null";
+    payment.faritra = payment.faritra || "null";
+    payment.fivondronana = payment.fivondronana || "null";
 
-      const birthDate = new Date(payment.date_de_naissance); // Parse the date_de_naissance
+    const birthDate = new Date(payment.date_de_naissance); // Parse the date_de_naissance
 
-      
-      // Validate the parsed date
-      //if (isNaN(birthDate.getTime())) {
-        //console.error("Invalid birth date format:", payment.date_de_naissance);
-      //}
+    const role = await prisma.role.findFirst({
+      where: {
+        role: payment.categorie,
+        year: parseInt(payment.annee),
+      },
+    });
 
-      // Calculate age
-      const paymentYear = parseInt(payment.year, 10);
-      const age = paymentYear - birthDate.getFullYear();
+    const alreadyPaid = await prisma.v_person_details.findFirst({
+      where: {
+        id_string: payment.id,
+        year: parseInt(payment.annee),
+      },
+    });
 
-      const role = await prisma.role.findFirst(
-        {where: 
-          { 
-            role: payment.categorie,
-            year: parseInt(payment.annee)
+    if (role) {
+      if (payment.vola == role.subscription) {
+        if (!alreadyPaid) {
+          if (isNaN(birthDate.getTime())) {
+            // Invalid birth date
+            await prisma.error.create({
+              data: {
+                motif: `Invalid birth date for payment ID: ${payment.id}`,
+              },
+            });
+          } else {
+            // Calculate age
+            const paymentYear = parseInt(payment.annee);
+            const age = paymentYear - birthDate.getFullYear();
+
+            if (age < role.age_limitation) {
+              // Payment successful, insert into person table
+              await prisma.person.create({
+                data: {
+                  id_string: payment.id,
+                  id_role: role.id,
+                  dioseze: payment.diosezy,
+                  district: payment.faritra,
+                  church: payment.fivondronana,
+                  payment: parseInt(payment.vola),
+                  year: parseInt(payment.annee),
+                  birth_date: birthDate,
+                },
+              });
+              console.log("Payment successfully inserted:", payment.id);
+            } else {
+              // Age limitation exceeded
+              await prisma.error.create({
+                data: {
+                  motif: `Beyond age limitation for payment ID: ${payment.id}`,
+                },
+              });
+            }
           }
+        } else {
+          // Already paid
+          await prisma.error.create({
+            data: {
+              motif: `User has already paid this year for payment ID: ${payment.id}`,
+            },
+          });
         }
-      );
-
-      console.log(role);
-
-      const alreadyPaid = await prisma.v_person_details.findFirst(
-        {
-          where:
-          {
-            id_string: payment.id,
-            year: parseInt(payment.annee)
-          }
-        }
-      );
-      
-      if(role){
-        if(payment.vola == role.subscription){
-          if(!alreadyPaid){
-            console.log("Payment successful :"+payment.id);
-          }else{
-            console.log("error on " + payment.id +": use already paid this year");
-          }
-        }else{
-          console.log("error on " + payment.id +": payment doesn't match subscription");
-        }
-      }else{
-        console.log("error on " + payment.id +": role does'nt");
+      } else {
+        // Payment doesn't match subscription
+        await prisma.error.create({
+          data: {
+            motif: `Payment doesn't match subscription for payment ID: ${payment.id}`,
+          },
+        });
       }
-      console.log(payment);
-    //response.status(200).send({ message: "Payments processed successfully." });
+    } else {
+      // Role doesn't exist
+      await prisma.error.create({
+        data: {
+          motif: `Role does not exist for payment ID: ${payment.id}`,
+        },
+      });
+    }
+
+    response.status(200).send({ message: "Data Submitted" });
   } catch (error) {
     console.error("Error processing payment:", error);
     response
@@ -155,6 +188,7 @@ app.post("/insertPayment", async (request: Request, response: Response) => {
     await prisma.$disconnect();
   }
 });
+
 /*app.post("/updatePayment", async (request: Request, response: Response) => {
   console.log("updatePayment");
   const prisma = new PrismaClient();

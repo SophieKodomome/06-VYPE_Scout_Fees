@@ -7,6 +7,7 @@ import axios from "axios";
 const requiredHeaders = ["annee", "id", "date_de_naissance", "categorie", "diosezy", "faritra", "fivondronana", "vola"];
 const fileError = ref<string | null>(null);
 const isFileValid = ref(false);
+const isFileSubmitted = ref(false);
 const uploadedFile = ref<File | null>(null); // Store the uploaded file reference
 const parsedData = ref<any[]>([]); // Store parsed sheet data
 
@@ -34,7 +35,6 @@ function handleFileUpload(event: Event) {
 
       // Parse the headers and normalize them
       const headers = XLSX.utils.sheet_to_json(sheet, { header: 1 })[0] as string[];
-      console.log("Parsed Headers:", headers);
       const normalizedHeaders = headers.map((header) => header.trim().toLowerCase());
 
       // Validate headers
@@ -45,29 +45,22 @@ function handleFileUpload(event: Event) {
         fileError.value = null;
         isFileValid.value = true;
 
-        // Parse the sheet data and handle dates/empty values
+        // Parse the sheet data and handle empty values and dates
         const rawData = XLSX.utils.sheet_to_json(sheet, { defval: "", raw: false });
         parsedData.value = rawData.map((row: any) => {
           const formattedRow: any = {};
 
-          // Map headers and normalize empty columns
           for (const [key, value] of Object.entries(row)) {
             const normalizedKey = key.trim().toLowerCase();
 
-            // Handle date fields
-            if (normalizedKey === "birthday" && value) {
-              const dateValue = new Date(value);
-              if (!isNaN(dateValue.getTime())) {
-                formattedRow[normalizedKey] = XLSX.SSF.format("yyyy/mm/dd", dateValue);
-              } else {
-                formattedRow[normalizedKey] = ""; // Handle invalid dates
-              }
+            // Handle date normalization
+            if (normalizedKey === "date_de_naissance") {
+              formattedRow[normalizedKey] = parseAndNormalizeDate(value);
             } else {
               formattedRow[normalizedKey] = value || ""; // Default empty values
             }
           }
 
-          // Ensure required fields are included
           requiredHeaders.forEach((header) => {
             if (!(header in formattedRow)) {
               formattedRow[header] = ""; // Fill missing columns with empty strings
@@ -76,7 +69,6 @@ function handleFileUpload(event: Event) {
 
           return formattedRow;
         });
-
       } else {
         fileError.value = `Invalid headers. Expected: ${requiredHeaders.join(", ")}`;
         isFileValid.value = false;
@@ -95,6 +87,29 @@ function handleFileUpload(event: Event) {
 
   reader.readAsBinaryString(file);
 }
+
+// Helper function to parse and normalize date values
+function parseAndNormalizeDate(value: any): string {
+  if (!value) return "";
+
+  // Check if the value is a valid number (Excel serial date)
+  if (typeof value === "number") {
+    const jsDate = new Date(Math.round((value - 25569) * 864e5)); // Adjust from Excel epoch
+    return jsDate.toISOString().split("T")[0]; // Format as yyyy-mm-dd
+  }
+
+  // Check if the value is a valid date string
+  const parsedDate = new Date(value);
+  if (!isNaN(parsedDate.getTime())) {
+    return parsedDate.toISOString().split("T")[0]; // Format as yyyy-mm-dd
+  }
+
+  // If not a valid date, return as-is or handle separately
+  console.warn(`Invalid date format detected: ${value}`);
+  return "";
+}
+
+
 
 
 async function handleSubmit() {
@@ -129,6 +144,8 @@ async function handleSubmit() {
 });
 
   console.log("All payments submitted.");
+  isFileSubmitted.value = true;
+  isFileValid.value = false;
 }
 
 
@@ -156,6 +173,7 @@ function formatExcelDate(value: number | string): string {
       <input type="file" accept=".xlsx, .xls" @change="handleFileUpload" />
       <p v-if="fileError" class="text-red-500">{{ fileError }}</p>
       <p v-if="isFileValid" class="text-green-500">File is valid!</p>
+      <p v-if="isFileSubmitted" class="text-green-500">Data Submitted!</p>
 
       <!-- Display Sheet Data -->
     <!--<div v-if="parsedData.length > 0" class="mt-4">
