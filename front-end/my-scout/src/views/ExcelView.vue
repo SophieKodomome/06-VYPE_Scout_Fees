@@ -4,7 +4,7 @@ import * as XLSX from "xlsx";
 import { ref } from "vue";
 import axios from "axios";
 
-const requiredHeaders = ["year", "birthday", "id", "name", "role", "dioseze", "district", "church", "paid"];
+const requiredHeaders = ["annee", "id", "date_de_naissance", "categorie", "diosezy", "faritra", "fivondronana", "vola"];
 const fileError = ref<string | null>(null);
 const isFileValid = ref(false);
 const uploadedFile = ref<File | null>(null); // Store the uploaded file reference
@@ -98,6 +98,7 @@ function handleFileUpload(event: Event) {
 
 
 async function handleSubmit() {
+  
   if (!isFileValid.value) {
     fileError.value = "Please upload a valid file before submitting.";
     return;
@@ -108,15 +109,29 @@ async function handleSubmit() {
     return;
   }
 
+  if (!parsedData.value || !Array.isArray(parsedData.value)) {
+    fileError.value = "Parsed data is invalid or empty.";
+    console.log("Parsed data issue:", parsedData.value);
+    return;
+  }
+
+  console.log("Parsed Data Length:", parsedData.value.length);
   console.log("Parsed Data:", parsedData.value);
 
+  parsedData.value.forEach(async (payment) => {
   try {
-    const response = await axios.post("http://localhost:8000/insertPayment", parsedData.value);
+    console.log("Submitting payment:", payment);
+    const response = await axios.post("http://localhost:8000/insertPayment", payment);
     console.log("Payment submitted successfully:", response.data);
   } catch (error) {
-    console.error("Error submitting payment:", error);
+    console.error(`Error submitting payment for ${JSON.stringify(payment)}:`, error);
   }
+});
+
+  console.log("All payments submitted.");
 }
+
+
 
 function formatExcelDate(value: number | string): string {
   // Check if value is a valid number (Excel serial date)
@@ -143,7 +158,7 @@ function formatExcelDate(value: number | string): string {
       <p v-if="isFileValid" class="text-green-500">File is valid!</p>
 
       <!-- Display Sheet Data -->
-      <div v-if="parsedData.length > 0" class="mt-4">
+    <!--<div v-if="parsedData.length > 0" class="mt-4">
         <h2 class="font-bold text-lg text-gray-700">Sheet Data:</h2>
         <table class="table-auto border-collapse border border-gray-400 w-full mt-2">
           <thead>
@@ -163,7 +178,7 @@ function formatExcelDate(value: number | string): string {
           </tbody>
         </table>
       </div>
-
+--->
       <!-- Submit Button -->
       <section class="justify-items-end">
         <MyButton v-on:click="handleSubmit" />
