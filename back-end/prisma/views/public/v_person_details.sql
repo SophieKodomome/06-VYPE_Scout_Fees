@@ -1,25 +1,17 @@
 SELECT
-  p.id AS person_id,
-  p.name AS person_name,
-  r.role AS role_name,
-  c.name AS church_name,
-  d.name AS district_name,
-  dz.name AS dioseze_name,
-  p.due,
-  p.paid,
+  p.id,
+  r.id AS id_role,
+  r.role,
+  p.church,
+  p.district,
+  p.dioseze,
+  r.subscription,
+  p.payment,
   p.year,
-  p.birth_date
+  p.birth_date,
+  r.age_limitation
 FROM
   (
-    (
-      (
-        (
-          person p
-          LEFT JOIN role r ON ((p.id_role = r.id))
-        )
-        LEFT JOIN church c ON ((p.id_church = c.id))
-      )
-      LEFT JOIN district d ON ((p.id_district = d.id))
-    )
-    LEFT JOIN dioseze dz ON ((p.id_dioseze = dz.id))
+    person p
+    LEFT JOIN role r ON ((p.id_role = r.id))
   );

@@ -8,52 +8,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model church {
-  id          Int      @id @default(autoincrement())
-  id_district Int
-  name        String?  @db.VarChar(100)
-  district    district @relation(fields: [id_district], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  person      person[]
-}
-
-model dioseze {
-  id       Int        @id @default(autoincrement())
-  name     String?    @db.VarChar(100)
-  district district[]
-  person   person[]
-}
-
-model district {
-  id         Int      @id @default(autoincrement())
-  id_dioseze Int
-  name       String?  @db.VarChar(100)
-  church     church[]
-  dioseze    dioseze  @relation(fields: [id_dioseze], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  person     person[]
-}
-
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model person {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(100)
-  id_role     Int
-  id_dioseze  Int
-  id_district Int
-  id_church   Int
-  paid        Int?
-  due         Int?
-  year        Int?
-  birth_date  DateTime @db.Date
-  church      church   @relation(fields: [id_church], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  dioseze     dioseze  @relation(fields: [id_dioseze], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  district    district @relation(fields: [id_district], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  role        role     @relation(fields: [id_role], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id         String   @db.VarChar(100)
+  id_role    Int
+  dioseze    String   @db.VarChar(100)
+  district   String   @db.VarChar(100)
+  church     String   @db.VarChar(100)
+  payment    Int?
+  year       Int?
+  birth_date DateTime @db.Date
+  role       role     @relation(fields: [id_role], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@ignore
 }
 
 model role {
-  id     Int      @id @default(autoincrement())
-  role   String   @db.VarChar(100)
-  due    Int?
-  person person[]
+  id             Int      @id @default(autoincrement())
+  role           String   @db.VarChar(100)
+  subscription   Int
+  year           Int
+  age_limitation Int
+  person         person[] @ignore
 }
 
 model error {
@@ -64,28 +40,15 @@ model error {
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view v_person_details {
-  person_id     Int       @unique
-  person_name   String?   @db.VarChar(100)
-  role_name     String?   @db.VarChar(100)
-  church_name   String?   @db.VarChar(100)
-  district_name String?   @db.VarChar(100)
-  dioseze_name  String?   @db.VarChar(100)
-  due           Int?
-  paid          Int?
-  year          Int?
-  birth_date    DateTime? @db.Date
-}
-
-/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-view v_person_has_not_paid {
-  person_id     Int       @unique
-  person_name   String?   @db.VarChar(100)
-  role_name     String?   @db.VarChar(100)
-  church_name   String?   @db.VarChar(100)
-  district_name String?   @db.VarChar(100)
-  dioseze_name  String?   @db.VarChar(100)
-  due           Int?
-  paid          Int?
-  year          Int?
-  birth_date    DateTime? @db.Date
+  id             String?   @db.VarChar(100)
+  id_role        Int?
+  role           String?   @db.VarChar(100)
+  church         String?   @db.VarChar(100)
+  district       String?   @db.VarChar(100)
+  dioseze        String?   @db.VarChar(100)
+  subscription   Int?
+  payment        Int?
+  year           Int?
+  birth_date     DateTime? @db.Date
+  age_limitation Int?
 }

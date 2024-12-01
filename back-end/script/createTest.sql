@@ -13,7 +13,8 @@ CREATE TABLE Error (
 );
 
 CREATE TABLE Person (
-    id VARCHAR(100) NOT NULL,
+    id SERIAL PRIMARY KEY,
+    id_string VARCHAR(100) NOT NULL,
     id_role INT NOT NULL,
     dioseze VARCHAR(100) NOT NULL,
     district VARCHAR(100) NOT NULL,
