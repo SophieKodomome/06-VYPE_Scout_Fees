@@ -114,7 +114,7 @@ app.post("/insertPayment", async (request, response) => {
                         // Invalid birth date
                         await prisma.error.create({
                             data: {
-                                motif: `Invalid birth date format: ${payment.date_de_naissance}`,
+                                motif: `Invalid birth date for payment ID: ${payment.id}`,
                             },
                         });
                     }
@@ -174,7 +174,7 @@ app.post("/insertPayment", async (request, response) => {
                 },
             });
         }
-        response.status(200).send({ message: "Payments processed successfully." });
+        response.status(200).send({ message: "Data Submitted" });
     }
     catch (error) {
         console.error("Error processing payment:", error);
